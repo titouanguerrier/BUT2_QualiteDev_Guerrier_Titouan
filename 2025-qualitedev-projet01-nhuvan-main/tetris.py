@@ -165,7 +165,7 @@ class Jeu:
 		for i, l in enumerate(m):
 			for j, k in enumerate(l):
 				if k != 0:
-					coords.append([i+self.position[0], j+self.position[1]])
+					coords.append([i+self.position[0], j+self.position[1]])# récupère les données
 		self.coordonnees = coords
 	def _estValide(self, x=0, y=0, r=0):
 		max_x, max_y = DIM_PLATEAU
