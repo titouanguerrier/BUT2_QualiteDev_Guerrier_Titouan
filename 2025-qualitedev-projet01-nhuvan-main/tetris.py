@@ -22,7 +22,7 @@ import time
 import pygame
 import sys
 
-
+#les dimensions de l'aire de jeu
 TAILLE_FENETRE = 640, 480
 DIM_PLATEAU = 10, 20
 BORDURE_PLATEAU = 4
@@ -42,7 +42,7 @@ POSITION_PIECES = POSITION_SCORE[0], 150
 POSITION_LIGNES = POSITION_SCORE[0], 180
 POSITION_TETRIS = POSITION_SCORE[0], 210
 POSITION_NIVEAU = POSITION_SCORE[0], 240
-
+#les différentes pièces composant le tetris
 PIECES = {
 	'O': [
 		'0000\n0110\n0110\n0000',
@@ -80,7 +80,7 @@ PIECES = {
 
 for name, rotations in PIECES.items():
 	PIECES[name] = [[[int(i) for i in p] for p in r.splitlines()] for r in rotations]
-
+#la palette de couleur dispo
 COULEURS = {
 	0: (0, 0, 0),
 	1: (255, 255, 0),
@@ -98,24 +98,21 @@ PIECES_KEYS = list(PIECES.keys())
 
 # Classe Tetris
 class Jeu:
-	"""
-	[Il manque la documentation de la classe]
-	"""
-	def __init__(self):
+	def __init__(self):#constructeur
 		pygame.init()
-		self.clock = pygame.time.Clock()
-		self.surface = pygame.display.set_mode(TAILLE_FENETRE)
+		self.clock = pygame.time.Clock()#horloge
+		self.surface = pygame.display.set_mode(TAILLE_FENETRE)#création de l'aire de jeu
 		self.fonts = {
 			'defaut': pygame.font.Font('freesansbold.ttf', 18),
 			'titre': pygame.font.Font('freesansbold.ttf', 100),
 		}
 		pygame.display.set_caption('Application Tetris')
-
+	#image d'accueil
 	def start(self):
 		self._afficherTexte('Tetris', CENTRE_FENETRE, font = 'titre')
 		self._afficherTexte('Appuyer sur une touche...', POS)
 		self._attente()
-
+	#image de game over
 	def stop(self):
 		self._afficherTexte('Perdu', CENTRE_FENETRE, font='titre')
 		self._attente()
@@ -129,6 +126,7 @@ class Jeu:
 		rect = rendu.get_rect()
 		rect.center = position
 		self.surface.blit(rendu, rect)
+	#rafraichi l'image
 	def _getEvent(self):
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -160,6 +158,7 @@ class Jeu:
 				if c != 0:
 					return c
 		return 0
+	#permet de bouger la pice en cours
 	def _calculerDonneesPieceCourante(self):
 		m=self.current[self.position[2]]
 		coords = []
@@ -239,7 +238,7 @@ class Jeu:
 		self.position = [int(DIM_PLATEAU[0] / 2)-2, -4, 0]
 		self._calculerDonneesPieceCourante()
 		self.dernier_mouvement = self.derniere_chute = time.time()
-	def _gererEvenements(self):
+	def _gererEvenements(self):#controleur
 		event = self._getEvent()
 		if event == K_p:
 			print("Pause")
@@ -273,7 +272,7 @@ class Jeu:
 				a+=1
 			self.position[1] += a-1
 		self._calculerDonneesPieceCourante()
-	def _gererGravite(self):
+	def _gererGravite(self):#permet de faire tomber la pièce
 		if time.time() - self.derniere_chute > 0.35:
 			self.derniere_chute = time.time()
 			if not self._estValide():
