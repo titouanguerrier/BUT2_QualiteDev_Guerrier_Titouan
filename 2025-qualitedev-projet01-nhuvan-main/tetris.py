@@ -48,12 +48,12 @@ class Jeu:
         self.attente()
 
     #image de game over
-    def stop(self):
+    def stop(self)->None:
         self.afficher_texte('Perdu', constantes.CENTRE_FENETRE, font='titre')
         self.attente()
         self.quitter()
 
-    def afficher_texte(self, text, position, couleur=9, font='defaut'):
+    def afficher_texte(self, text, position, couleur=9, font='defaut')->None:
         #		print("Afficher Texte")
         font = self.fonts.get(font, self.fonts['defaut'])
         couleur = constantes.COULEURS.get(couleur, constantes.COULEURS[9])
@@ -63,7 +63,7 @@ class Jeu:
         self.surface.blit(rendu, rect)
 
     #rafraichi l'image
-    def get_event(self):
+    def get_event(self)->int|None:
         for event in pygame.event.get():
             if event.type == QUIT:
                 self.quitter()
@@ -75,24 +75,24 @@ class Jeu:
                     continue
                 return event.key
 
-    def quitter(self):
+    def quitter(self)->None:
         print("Quitter")
         pygame.quit()
         sys.exit()
 
-    def rendre(self):
+    def rendre(self)->None:
         pygame.display.update()
         self.clock.tick()
 
-    def attente(self):
+    def attente(self)->None:
         print("Attente")
         while self.get_event() == None:
             self.rendre()
 
-    def get_piece(self):
+    def get_piece(self)->list:
         return constantes.PIECES.get(random.choice(constantes.PIECES_KEYS))
 
-    def get_current_piece_color(self):
+    def get_current_piece_color(self)->int:
         for l in self.current[0]:
             for c in l:
                 if c != 0:
@@ -100,7 +100,7 @@ class Jeu:
         return 0
 
     #permet de bouger la pice en cours
-    def calculer_donnees_piece_courante(self):
+    def calculer_donnees_piece_courante(self)->None:
         m = self.current[self.position[2]]
         coords = []
         for i, l in enumerate(m):
@@ -110,7 +110,7 @@ class Jeu:
                                    ])  # récupère les données
         self.coordonnees = coords
 
-    def est_valide(self, x=0, y=0, r=0):
+    def est_valide(self, x=0, y=0, r=0)->bool:
         max_x, max_y = constantes.DIM_PLATEAU
         if r == 0:
             coordonnees = self.coordonnees
@@ -142,7 +142,7 @@ class Jeu:
 #		print("Position testée valide: x=%s, y=%s" % (x, y))
         return True
 
-    def poser_piece(self):
+    def poser_piece(self)->None:
         print("La pièce est posée")
         if self.position[1] <= 0:
             self.perdu = True
@@ -175,12 +175,12 @@ class Jeu:
         # Travail avec la pièce courante terminé
         self.current = None
 
-    def first(self):
+    def first(self)->None:
         self.plateau = [[0] * constantes.DIM_PLATEAU[0] for i in range(constantes.DIM_PLATEAU[1])]
         self.score, self.pieces, self.lignes, self.tetris, self.niveau = 0, 0, 0, 0, 1
         self.current, self.suivant, self.perdu = None, self.get_piece(), False
 
-    def next(self):
+    def next(self)->None:
         print("Piece suivante")
         self.current, self.suivant = self.suivant, self.get_piece()
         self.pieces += 1
@@ -188,7 +188,7 @@ class Jeu:
         self.calculer_donnees_piece_courante()
         self.dernier_mouvement = self.derniere_chute = time.time()
 
-    def gerer_evenements(self):  #controleur
+    def gerer_evenements(self)->None:  #controleur
         event = self.get_event()
         if event == K_p:
             print("Pause")
@@ -224,7 +224,7 @@ class Jeu:
             self.position[1] += a - 1
         self.calculer_donnees_piece_courante()
 
-    def gerer_gravite(self):  #permet de faire tomber la pièce
+    def gerer_gravite(self)->None:  #permet de faire tomber la pièce
         if time.time() - self.derniere_chute > 0.35:
             self.derniere_chute = time.time()
             if not self.est_valide():
@@ -240,7 +240,7 @@ class Jeu:
                 self.position[1] += 1
                 self.calculer_donnees_piece_courante()
 
-    def dessiner_plateau(self):
+    def dessiner_plateau(self)->None:
         self.surface.fill(constantes.COULEURS.get(0))
         pygame.draw.rect(self.surface, constantes.COULEURS[8],
                          constantes.START_PLABORD + constantes.TAILLE_PLABORD, constantes.BORDURE_PLATEAU)
@@ -272,7 +272,7 @@ class Jeu:
 
         self.rendre()
 
-    def play(self):
+    def play(self)->None:
         print("Jouer")
         self.surface.fill(constantes.COULEURS.get(0))
         self.first()
