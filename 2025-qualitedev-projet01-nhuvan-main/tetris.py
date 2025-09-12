@@ -43,17 +43,20 @@ class Jeu:
 
     #image d'accueil
     def start(self):
+        ''''print("Démarrage du jeu")'''
         self.afficher_texte('Tetris', constantes.CENTRE_FENETRE, font='titre')
         self.afficher_texte('Appuyer sur une touche...', constantes.POS)
         self.attente()
 
     #image de game over
     def stop(self)->None:
+        ''''print("Arrêt du jeu")'''
         self.afficher_texte('Perdu', constantes.CENTRE_FENETRE, font='titre')
         self.attente()
         self.quitter()
 
     def afficher_texte(self, text, position, couleur=9, font='defaut')->None:
+        '''Affiche du texte à l'écran'''
         #		print("Afficher Texte")
         font = self.fonts.get(font, self.fonts['defaut'])
         couleur = constantes.COULEURS.get(couleur, constantes.COULEURS[9])
@@ -64,6 +67,7 @@ class Jeu:
 
     #rafraichi l'image
     def get_event(self)->int|None:
+        '''Récupère les événements clavier et souris'''
         for event in pygame.event.get():
             if event.type == QUIT:
                 self.quitter()
@@ -76,23 +80,28 @@ class Jeu:
                 return event.key
 
     def quitter(self)->None:
+        '''Quitte le jeu proprement'''
         print("Quitter")
         pygame.quit()
         sys.exit()
 
     def rendre(self)->None:
+        '''Rafraîchit l'écran'''
         pygame.display.update()
         self.clock.tick()
 
     def attente(self)->None:
+        '''Attente d'une action de l'utilisateur'''
         print("Attente")
         while self.get_event() == None:
             self.rendre()
 
     def get_piece(self)->list:
+        '''Retourne une pièce aléatoire'''
         return constantes.PIECES.get(random.choice(constantes.PIECES_KEYS))
 
     def get_current_piece_color(self)->int:
+        '''Retourne la couleur de la pièce courante'''
         for l in self.current[0]:
             for c in l:
                 if c != 0:
@@ -101,6 +110,7 @@ class Jeu:
 
     #permet de bouger la pice en cours
     def calculer_donnees_piece_courante(self)->None:
+        '''Calcule les coordonnées de la pièce courante'''
         m = self.current[self.position[2]]
         coords = []
         for i, l in enumerate(m):
@@ -111,6 +121,7 @@ class Jeu:
         self.coordonnees = coords
 
     def est_valide(self, x=0, y=0, r=0)->bool:
+        '''Teste si la position est valide'''
         max_x, max_y = constantes.DIM_PLATEAU
         if r == 0:
             coordonnees = self.coordonnees
@@ -143,6 +154,7 @@ class Jeu:
         return True
 
     def poser_piece(self)->None:
+        '''Pose la pièce courante sur le plateau'''
         print("La pièce est posée")
         if self.position[1] <= 0:
             self.perdu = True
@@ -176,11 +188,13 @@ class Jeu:
         self.current = None
 
     def first(self)->None:
+        '''Initialise une nouvelle partie'''
         self.plateau = [[0] * constantes.DIM_PLATEAU[0] for i in range(constantes.DIM_PLATEAU[1])]
         self.score, self.pieces, self.lignes, self.tetris, self.niveau = 0, 0, 0, 0, 1
         self.current, self.suivant, self.perdu = None, self.get_piece(), False
 
     def next(self)->None:
+        '''Passe à la pièce suivante'''
         print("Piece suivante")
         self.current, self.suivant = self.suivant, self.get_piece()
         self.pieces += 1
@@ -189,6 +203,7 @@ class Jeu:
         self.dernier_mouvement = self.derniere_chute = time.time()
 
     def gerer_evenements(self)->None:  #controleur
+        '''Gère les événements clavier'''
         event = self.get_event()
         if event == K_p:
             print("Pause")
@@ -225,8 +240,9 @@ class Jeu:
         self.calculer_donnees_piece_courante()
 
     def gerer_gravite(self)->None:  #permet de faire tomber la pièce
+        '''Gère la gravité de la pièce courante'''
         if time.time() - self.derniere_chute > 0.35:
-            self.derniere_chute = time.time()
+            self.derniere_chute = time .time()
             if not self.est_valide():
                 print("On est dans une position invalide")
                 self.position[1] -= 1
@@ -241,6 +257,7 @@ class Jeu:
                 self.calculer_donnees_piece_courante()
 
     def dessiner_plateau(self)->None:
+        '''Dessine le plateau de jeu'''
         self.surface.fill(constantes.COULEURS.get(0))
         pygame.draw.rect(self.surface, constantes.COULEURS[8],
                          constantes.START_PLABORD + constantes.TAILLE_PLABORD, constantes.BORDURE_PLATEAU)
@@ -273,6 +290,7 @@ class Jeu:
         self.rendre()
 
     def play(self)->None:
+        '''Lance une partie de Tetris'''
         print("Jouer")
         self.surface.fill(constantes.COULEURS.get(0))
         self.first()
